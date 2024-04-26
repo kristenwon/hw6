@@ -95,5 +95,46 @@ bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>
 								   std::string word, std::set<std::string>& result, unsigned int r, unsigned int c, int dr, int dc)
 {
 //add your solution here!
+	// Append the letter at position (r, c) to the word
+    word += board[r][c];
 
+    // Check if the current word is in the dictionary and is longer than any existing word in the result set
+    if (dict.count(word) && word.length() > 1) {
+        bool insertWord = true;
+        std::set<std::string> wordsToRemove;
+        int wordLength = word.length();
+        for (const auto& existingWord : result) {
+            int existingWordLength = existingWord.length();
+            if (existingWordLength < wordLength && word.find(existingWord) == 0) {
+                // If a shorter word is found in the result set that is a prefix of the current word, mark it for removal
+                wordsToRemove.insert(existingWord);
+            }
+            else if (existingWordLength > wordLength && existingWord.find(word) == 0) {
+                // If a longer word is found in the result set that starts with the current word, do not insert it
+                insertWord = false;
+                break;
+            }
+        }
+        // Remove words that are shorter than the current word and are prefixes of the current word
+        for (const auto& wordToRemove : wordsToRemove) {
+            result.erase(wordToRemove);
+        }
+        if (insertWord) {
+            result.insert(word);
+        }
+    }
+
+    // Base case: If the word is not a prefix, stop recursion
+    if (!prefix.count(word)) {
+        return false;
+    }
+
+    // Recursively search in the next position (r + dr, c + dc)
+    int next_r = r + dr;
+    int next_c = c + dc;
+    if (next_r >= 0 && next_r < static_cast<int>(board.size()) && next_c >= 0 && next_c < static_cast<int>(board.size())) {
+        boggleHelper(dict, prefix, board, word, result, next_r, next_c, dr, dc);
+    }
+
+    return true;
 }
