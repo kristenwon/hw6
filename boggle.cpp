@@ -105,16 +105,22 @@ bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>
 		}
 	}
 	word += board[r][c];
-	if(prefix.find(word) == prefix.end()){
-        return false;
-    }
-    if(boggleHelper(dict, prefix, board, word, result, r + dr, c + dc, dr, dc)){
-        return true;
-    }
-    if(dict.find(word) != dict.end()){
-        result.insert(word);
-        return true;
-    }
-    
-    return false;
+	if(prefix.find(word) != dict.end()){
+		if(boggleHelper(dict, prefix, board, word, result, r+dr, c+dc, dr, dc)){
+			return true;
+		}
+		else {
+			if(dict.find(word) != dict.end()){
+				result.insert(word);
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+	else {
+		return false;
+	}
+	return false;
 }
